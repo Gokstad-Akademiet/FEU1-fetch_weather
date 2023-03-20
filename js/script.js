@@ -19,10 +19,14 @@ const insertData = document.querySelector("#catFact");
 getData(); */
 
 const place = document.querySelector("#location").addEventListener("input", setCity);
+let city = "";
 
 function setCity(e) {
-	const city = e.target.value;
+	city = e.target.value;
+	getData();
+}
 
+function getData() {
 	const options = {
 		method: "GET",
 		headers: {
@@ -34,9 +38,20 @@ function setCity(e) {
 	fetch(`https://weatherapi-com.p.rapidapi.com/current.json?q=${city}`, options)
 		.then((response) => response.json())
 		.then((response) => {
-			insertData.innerHTML = `<p>${response.location.name} i ${response.location.region} har ${response.current.temp_c} grader, 
-            men det føles som ${response.current.feelslike_c} grader. </p>
-            <p>Ikonet for ${response.current.condition.text} er <img src=${response.current.condition.icon} /></p></p>`;
+			insertData.innerHTML = `
+			<div class="flex flex-column">
+				<div class="flex-center">
+					<h1>${response.location.name}</h1> 
+					<div class="flex-center flex-column space-x">
+						<img src=${response.current.condition.icon}  width="50" height="auto" />
+						<span>${response.current.condition.text} </span>
+					</div>
+				</div>
+			<div>
+			<span >${response.location.region}<span>
+			<p> Temperatur: ${response.current.temp_c} grader </p>
+			<p>Føles som: ${response.current.feelslike_c} grader</p>
+			`;
 		})
-		.catch((insertData.innerHTML = "fant ikke noe by som heter " + city));
+		.catch((insertData.innerHTML = `<p class="error">Fant dessverre ingen by som heter "${city}"</p>`));
 }
